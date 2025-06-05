@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Warung Jamet Online</title>
+<style>
+  /* Reset & base */
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f8f9fa;
+    color: #333;
+    line-height: 1.6;
+  }
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+  /* Header */
+  header {
+    background: #9c0a0a;
+    color: white;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  header h1 {
+    font-weight: 700;
+    font-size: 1.8rem;
+    letter-spacing: 1px;
+  }
+  nav {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  nav a {
+    color: white;
+    font-weight: 600;
+    transition: color 0.3s ease;
+  }
+  nav a:hover {
+    color: #ffe4c4;
+  }
+  #view-cart-btn {
+    background: #fff;
+    color: #42180b;
+    font-weight: 700;
+    padding: 0.4rem 1rem;
+    border-radius: 30px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s ease, color 0.3s ease;
+    font-size: 1rem;
+  }
+  #view-cart-btn:hover {
+    background: #e64a19;
+    color: rgb(87, 10, 10);
+  }
+  /* Promo Slider Container */
+  .promo-slider {
+    margin: 1rem auto;
+    max-width: 1200px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgb(0 0 0 / 0.1);
+  }
+  .slides {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+  }
+  .slide {
+    min-width: 100%;
+    position: relative;
+    color: hsl(27, 85%, 42%);
+    text-align: center;
+    background-size: cover;
+    background-position: center;
+    height: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 1rem;
+  }
+  .slide h2 {
+    font-size: 2rem;
+    text-shadow: 2px 2px 6px rgba(0,0,0,0.6);
+    margin-bottom: 0.5rem;
+  }
+  .slide p {
+    font-weight: 600;
+    font-size: 1.1rem;
+    text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+  }
+  /* Slider nav buttons */
+  .slider-buttons {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    height: 0;
+    display: flex;
+    justify-content: space-between;
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
+  .slider-buttons button {
+    pointer-events: all;
+    background: rgba(88, 37, 37, 0.8);
+    border: none;
+    padding: 0.6rem 1rem;
+    border-radius: 30px;
+    font-size: 1.3rem;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    color: #9e1919;
+    box-shadow: 0 2px 6px rgb(0 0 0 / 0.2);
+  }
+  .slider-buttons button:hover {
+    background: #9b0f0f;
+    color: white;
+  }
+  /* Sections container general */
+  main {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+  }
+  section {
+    margin-bottom: 3rem;
+  }
+  section h2 {
+    margin-bottom: 1rem;
+    border-left: 5px solid #8f0b0b;
+    padding-left: 0.8rem;
+    font-size: 1.8rem;
+    color: #ff5722;
+  }
+
+  /* Product grid */
+  .product-grid {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(220px,1fr));
+  }
+  .product-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgb(0 0 0 / 0.1);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease;
+  }
+  .product-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 8px 24px rgb(0 0 0 / 0.15);
+  }
+  .product-card img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+  }
+  .product-info {
+    padding: 1rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .product-info h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.4rem;
+    color: #444;
+  }
+  .price {
+    font-weight: 700;
+    color: #e65100;
+    margin-bottom: 0.8rem;
+    font-size: 1.2rem;
+  }
+  .quantity-container {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 0.8rem;
+  }
+  .quantity-container label {
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+  .quantity-container input {
+    width: 45px;
+    padding: 0.3rem 0.5rem;
+    font-size: 1rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    text-align: center;
+  }
+  .add-btn {
+    background: #ff5722;
+    border: none;
+    border-radius: 8px;
+    padding: 0.6rem 0;
+    font-weight: 700;
+    font-size: 1rem;
+    color: white;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  .add-btn:hover {
+    background: #e64a19;
+  }
+
+  /* WhatsApp floating button */
+  .whatsapp-float {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #25d366;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    box-shadow: 0 4px 10px rgb(0 0 0 / 0.3);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  .whatsapp-float:hover {
+    background: #1ebe5d;
+  }
+  .whatsapp-float svg {
+    fill: white;
+    width: 30px;
+    height: 30px;
+  }
+
+  /* Order Modal */
+  #order-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.6);
+    z-index: 2000;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+  }
+  #order-modal.active {
+    display: flex;
+  }
+  #order-modal .modal-content {
+    background: white;
+    border-radius: 12px;
+    max-width: 450px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 8px 24px rgb(0 0 0 / 0.3);
+    display: flex;
+    flex-direction: column;
+  }
+  #order-modal header {
+    padding: 1rem 1.5rem;
+    background: #9e231e;
+    color: rgb(248, 240, 240);
+    border-radius: 12px 12px 0 0;
+    font-size: 1.3rem;
+    font-weight: 700;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  #order-modal header button.close-btn {
+    background: transparent;
+    border: none;
+    font-size: 1.9rem;
+    line-height: 1;
+    cursor: pointer;
+    color: white;
+    font-weight: 900;
+  }
+  #order-modal main {
+    padding: 1rem 1.5rem;
+    flex-grow: 1;
+  }
+  #order-modal .order-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.8rem;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 0.4rem;
+  }
+  #order-modal .order-item span {
+    font-size: 1rem;
+    color: #444;
+  }
+  #order-modal .order-item .qty-price {
+    text-align: right;
+  }
+  #order-modal .payment-methods {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+  }
+  #order-modal .payment-methods label {
+    display: block;
+    margin-bottom: 0.4rem;
+    font-weight: 600;
+    cursor: pointer;
+    user-select: none;
+  }
+  #order-modal .payment-methods input[type="radio"] {
+    margin-right: 0.6rem;
+    cursor: pointer;
+  }
+  #order-modal footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #eee;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #a42419;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  #order-modal footer button.checkout-btn {
+    background: #ff5722;
+    border: none;
+    color: white;
+    font-weight: 700;
+    padding: 0.6rem 1.2rem;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  #order-modal footer button.checkout-btn:hover {
+    background: #e64a19;
+  }
+  /* Responsive */
+  @media (max-width: 600px) {
+    header {
+      flex-direction: column;
+      text-align: center;
+      gap: 0.5rem;
+    }
+    nav {
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    nav a {
+      margin: 0.3rem 0.6rem;
+    }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Warung Jamet</h1>
+  <nav>
+    <a href="#promo">Promo</a>
+    <a href="#food">Makanan</a>
+    <a href="#snacks">Makanan Ringan</a>
+    <a href="#drinks">Minuman</a>
+    <button id="view-cart-btn" aria-label="Lihat Pesanan">Lihat Pesanan (0)</button>
+  </nav>
+</header>
+
+<section class="promo-slider" id="promo" aria-label="Promotional Slider">
+  <div class="slides" aria-live="polite">
+    <div class="slide" style="background-image: url('https://th.bing.com/th/id/R.3ad7a33795a91555b229437487c4181c?rik=0IRFJbFzG%2btJhA&riu=http%3a%2f%2fwww.solidbackgrounds.com%2fimages%2f2560x1600%2f2560x1600-cream-solid-color-background.jpg&ehk=HiIPzSVHCRbtFIbydKrd8aL7TtI377rmTAD8DnhDldU%3d&risl=&pid=ImgRaw&r=0');">
+      <h2>Selamat Datang Di Warung Jamet</h2>
+      <p>Nikmati Berbagai Makanan dan Minuman Lezatnya!</p>
+    </div>
+    <div class="slide" style="background-image: url('https://th.bing.com/th/id/R.3ad7a33795a91555b229437487c4181c?rik=0IRFJbFzG%2btJhA&riu=http%3a%2f%2fwww.solidbackgrounds.com%2fimages%2f2560x1600%2f2560x1600-cream-solid-color-background.jpg&ehk=HiIPzSVHCRbtFIbydKrd8aL7TtI377rmTAD8DnhDldU%3d&risl=&pid=ImgRaw&r=0');">
+      <h2>Lezatnya Setiap Gigitan, Cinta di Setiap Sajian!</h2>
+      <p>Rasanya Bikin Nagih, Harganya Bikin Happy!</p>
+    </div>
+    <div class="slide" style="background-image: url('https://th.bing.com/th/id/R.3ad7a33795a91555b229437487c4181c?rik=0IRFJbFzG%2btJhA&riu=http%3a%2f%2fwww.solidbackgrounds.com%2fimages%2f2560x1600%2f2560x1600-cream-solid-color-background.jpg&ehk=HiIPzSVHCRbtFIbydKrd8aL7TtI377rmTAD8DnhDldU%3d&risl=&pid=ImgRaw&r=0');">
+      <h2>Lapar? Yuk, Pesan Sekarang!</h2>
+      <p>Jangan Tunggu Besok, Makan Enak Hari Ini Juga!-</p>
+    </div>
+  </div>
+  <div class="slider-buttons">
+    <button aria-label="Previous Slide" id="prevBtn">&#10094;</button>
+    <button aria-label="Next Slide" id="nextBtn">&#10095;</button>
+  </div>
+</section>
+
+<main>
+  <section id="food" aria-label="Daftar Makanan">
+    <h2>Makanan</h2>
+    <div class="product-grid">
+      <article class="product-card" tabindex="0" data-name="Ayam Katsu" data-price="15000">
+        <img src="https://www.masakapahariini.com/wp-content/uploads/2020/06/Ayam-Katsu.jpg" alt="Ayam Katsu" />
+        <div class="product-info">
+          <h3>Ayam Katsu</h3>
+          <div class="price">Rp 15.000</div>
+          <div class="quantity-container">
+            <label for="qty-Ayam Katsu">Qty:</label>
+            <input type="number" min="1" value="1" id="qty-ayamkatsu" aria-label="Jumlah pesanan Ayam Katsu" />
+          </div>
+          <button class="add-btn" data-targetqty="qty-ayamkatsu">Tambah ke Keranjang</button>
+        </div>
+      </article>
+      <article class="product-card" tabindex="0" data-name="Ayam Geprek" data-price="15000">
+        <img src="https://tse1.mm.bing.net/th?id=OIP.t-TUy36aQCeYVjkUxRniEwHaEb&pid=Api&P=0&h=180" alt="Ayam Geprek" />
+        <div class="product-info">
+          <h3>Ayam Geprek</h3>
+          <div class="price">Rp 15.000</div>
+          <div class="quantity-container">
+            <label for="qty-ayamgeprek">Qty:</label>
+            <input type="number" min="1" value="1" id="qty-ayamgeprek" aria-label="Jumlah pesanan Ayam Geprek" />
+          </div>
+          <button class="add-btn" data-targetqty="qty-ayamgeprek">Tambah ke Keranjang</button>
+        </div>
+      </article>
+      <article class="product-card" tabindex="0" data-name="Nasi Goreng Seafood" data-price="18000">
+        <img src="https://i1.wp.com/hobimasak.info/wp-content/uploads/NASI-GORENG-SEAFOOD.jpg?fit=1200%2C960&ssl=1" alt="Nasi Goreng Seafood" />
+        <div class="product-info">
+          <h3>Nasi Goreng Seafood</h3>
+          <div class="price">Rp 18.000</div>
+          <div class="quantity-container">
+            <label for="qty-nasigorengseafood">Qty:</label>
+            <input type="number" min="1" value="1" id="qty-nasigorengseafood" aria-label="Jumlah pesanan Nasi Goreng Seafood" />
+          </div>
+          <button class="add-btn" data-targetqty="qty-nasigorengseafood">Tambah ke Keranjang</button>
+        </div>
+      </article>
+      <article class="product-card" tabindex="0" data-name="Mie Nyemek" data-price="12000">
+        <img src="https://th.bing.com/th/id/OIP.ZHr6fGvAJvIdQikPISzr9AHaE8?w=263&h=180&c=7&r=0&o=5&dpr=1.1&pid=1.7" alt="Mie Nyemek" />
+        <div class="product-info">
+          <h3>Mie Nyemek</h3>
+          <div class="price">Rp 12.000</div>
+          <div class="quantity-container">
+            <label for="qty-mienyemek">Qty:</label>
+            <input type="number" min="1" value="1" id="qty-mienyemek" aria-label="Jumlah pesanan Mie Nyemek" />
+          </div>
+          <button class="add-btn" data-targetqty="qty-mienyemek">Tambah ke Keranjang</button>
+        </div>
+      </article>
+      <article class="product-card" tabindex="0" data-name="Kwetiaw Spesial" data-price="12000">
+        <img src="https://tse3.mm.bing.net/th?id=OIP.l0vSBx9aYC42Y7wevBPjswHaEK&pid=Api&P=0&h=180" alt="Kwetiaw Spesial" />
+        <div class="product-info">
+          <h3>Kwetiaw Spesial</h3>
+          <div class="price">Rp 12.000</div>
+          <div class="quantity-container">
+            <label for="qty-kwatiawspesial">Qty:</label>
+            <input type="number" min="1" value="1" id="qty-kwatiawspesial" aria-label="Jumlah pesanan Kwetiaw Spesial" />
+          </div>
+          <button class="add-btn" data-targetqty="qty-kwatiawspesial">Tambah ke Keranjang</button>
+        </div>
+      </article>
+      <article class="product-card" tabindex="0" data-name="Pecel" data-price="10000">
+        <img src="https://d1vbn70lmn1nqe.cloudfront.net/prod/wp-content/uploads/2023/07/21044831/ini-resep-pecel-yang-praktis-dan-menggugah-selera.jpg.webp" alt="Pecel" />
+        <div class="product-info">
+          <h3>Pecel</h3>
+          <div class="price">Rp 10.000</div>
+          <div class="quantity-container">
+            <label for="qty-pecel">Qty:</label>
+            <input type="number" min="1" value="1" id="qty-pecel" aria-label="Jumlah pesanan Pecel" />
+          </div>
+          <button class="add-btn" data-targetqty="qty-pecel">Tambah ke Keranjang</button>
+        </div>
+      </article>
+      <article class="product-card" tabindex="0" data-name="Pecel Ayam" data-price="18000">
+        <img src="https://img-global.cpcdn.com/recipes/708b7340ea7172fb/680x482cq70/pecel-ayam-sambal-tomat-foto-resep-utama.jpg" alt="Pecel Ayam" />
+        <div class="product-info">
+          <h3>Pecel Ayam</h3>
+          <div class="price">Rp 18.000</div>
+          <div class="quantity-container">
+            <label for="qty-pecelayam">Qty:</label>
+            <input type="number" min="1" value="1" id="qty-pecelayam" aria-label="Jumlah pesanan Pecel Ayam" />
+          </div>
+          <button class="add-btn" data-targetqty="qty-pecelayam">Tambah ke Keranjang</button>
+        </div>
+      </article>
+      <article class="product-card" tabindex="0" data-name="Pecel Lele" data-price="15000">
+        <img src="https://th.bing.com/th/id/OIP.N4XKB0XM0DfBg9wMEwRW_wHaJQ?w=1080&h=1350&rs=1&pid=ImgDetMain" alt="Pecel Lele" />
+        <div class="product-info">
+          <h3>Pecel Lele</h3>
+          <div class="price">Rp 15.000</div>
+          <div class="quantity-container">
+            <label for="qty-pecellele">Qty:</label>
+            <input type="number" min="1" value="1" id="qty-pecellele" aria-label="Jumlah pesanan Pecel Lele" />
+          </div>
+          <button class="add-btn" data-targetqty="qty-pecellele">Tambah ke Keranjang</button>
+        </div>
+      </article>
+      <article class="product-card" tabindex="0" data-name="Soto Ayam" data-price="18000">
+        <img src="https://poshjournal.com/wp-content/uploads/2021/03/soto-ayam-recipe-16.jpg" alt="Soto Ayam" />
+        <div class="product-info">
+          <h3>Soto Ayam</h3>
+          <div class="price">Rp 18.000</div>
+          <div class="quantity-container">
+            <label for="qty-sotoayam">Qty:</label>
+            <input type="number" min="1" value="1" id="qty-sotoayam" aria-label="Jumlah pesanan soto ayam" />
+          </div>
+          <button class="add-btn" data-targetqty="qty-sotoayam">Tambah ke Keranjang</button>
+        </div>
+      </article>
+      <article class="product-card" tabindex="0" data-name="Sop Iga" data-price="23000">
+        <img src="https://www.resepistimewa.com/wp-content/uploads/sop-iga-sapi.jpg" alt="Sop Iga" />
+        <div class="product-info">
+          <h3>Sop Iga</h3>
+          <div class="price">Rp 23.000</div>
+          <div class="quantity-container">
+            <label for="qty-sopiga">Qty:</label>
+            <input type="number" min="1" value="1" id="qty-sopiga" aria-label="Jumlah pesanan Sop Iga" />
+          </div>
+          <button class="add-btn" data-targetqty="qty-pecel">Tambah ke Keranjang</button>
+        </div>
+      </article>
+      <article class="product-card" tabindex="0" data-name="Sop Kambing" data-price="25000">
+        <img src="https://www.masakapahariini.com/wp-content/uploads/2023/06/Sop-kambing.jpeg" alt="Sop Kambing" />
+        <div class="product-info">
+          <h3>Sop Kambing</h3>
+          <div class="price">Rp 25.000</div>
+          <div class="quantity-container">
+            <label for="qty-sopkambing">Qty:</label>
+            <input type="number" min="1" value="1" id="qty-sopkambing" aria-label="Jumlah pesanan sop kambing" />
+          </div>
+          <button class="add-btn" data-targetqty="qty-sotoayam">Tambah ke Keranjang</button>
+        </div>
+      </article>
+    </div>
+  </section>
+
+   <section id="snacks" aria-label="Daftar Makanan Ringan">
+    <h2>Makanan Ringan</h2>
+    <div class="product-grid">
+      <article class="product-card" tabindex="0" data-name="Roti Bakar Keju coklat" data-price="12000">
+        <img src="https://th.bing.com/th?q=Roti+Bakar+Coklat+Keju&w=120&h=120&c=1&rs=1&qlt=90&cb=1&dpr=1.3&pid=InlineBlock&mkt=en-ID&cc=ID&setlang=en&adlt=strict&t=1&mw=247" alt="Roti Bakar Keju coklat" />
+        <div class="product-info">
+          <h3>Roti Bakar Keju coklat</h3>
+          <div class="price">Rp 12.000</div>
+          <div class="quantity-container">
+            <label for="qty-rotibakar">Qty:</label>
+            <input type="number" min="1" value="1" id="qty-rotibakar" aria-label="Jumlah pesanan Roti Bakar Keju coklat" />
+          </div>
+          <button class="add-btn" data-targetqty="qty-rotibakar">Tambah ke Keranjang</button>
+        </div>
+      </article>
+      <article class="product-card" tabindex="0" data-name="Roti Kukus" data-price="12000">
+        <img src="https://ts1.mm.bing.net/th?id=OIP.ypLb1kgnUF4ZNc_fw7KgagAAAA&pid=15.1" alt="Roti Kukus" />
+        <div class="product-info">
+          <h3>Roti Kukus</h3>
+          <div class="price">Rp 12.000</div>
+          <div class="quantity-container">
+            <label for="qty-rotikukus">Qty:</label>
+            <input type="number" min="1" value="1" id="qty-rotikukus" aria-label="Jumlah pesanan Roti Kukus" />
+          </div>
+          <button class="add-btn" data-targetqty="qty-rotikukus">Tambah ke Keranjang</button>
+        </div>
+        </article>
+      <article class="product-card" tabindex="0" data-name="Pisang Lumer" data-price="15000">
+        <img src="https://diyjoy.com/wp-content/uploads/2022/12/Super-Easy-Chocolate-Bars-Recipe.jpg" alt="Pisang Lumer" />
+        <div class="product-info">
+          <h3>Pisang Lumer</h3>
+          <div class="price">Rp 15.000</div>
+          <div class="quantity-container">
+            <label for="qty-pisanglumer">Qty:</label>
+            <input type="number" min="1" value="1" id="qty-pisanglumer" aria-label="Jumlah pesanan Pisang Lumer" />
+          </div>
+          <button class="add-btn" data-targetqty="qty-pisanglumer">Tambah ke Keranjang</button>
+        </div>
+        </article>
+      <article class="product-card" tabindex="0" data-name="Pancong Lumer" data-price="12000">
+        <img src="https://cemarafoodcourt.com/wp-content/uploads/2024/12/Resep-Kue-Pancong-Lumer.webp" alt="Pancong Lumer" />
+        <div class="product-info">
+          <h3>Pancong Lumer</h3>
+          <div class="price">Rp 12.000</div>
+          <div class="quantity-container">
+            <label for="qty-panconglumer">Qty:</label>
+            <input type="number" min="1" value="1" id="qty-panconglumer" aria-label="Jumlah pesanan Pancong Lumer" />
+          </div>
+          <button class="add-btn" data-targetqty="qty-panconglumer">Tambah ke Keranjang</button>
+        </div>
+      </article>
+      <article class="product-card" tabindex="0" data-name="Dimsum" data-price="12000">
+        <img src="https://th.bing.com/th/id/OIP.MrAZSqyPzB8cQGGNqvU1ugHaE8?w=263&h=180&c=7&r=0&o=5&dpr=1.1&pid=1.7" alt="Dimsum" />
+        <div class="product-info">
+          <h3>Dimsum</h3>
+          <div class="price">Rp 12.000</div>
+          <div class="quantity-container">
+            <label for="qty-dimsum">Qty:</label>
+            <input type="number" min="1" value="1" id="qty-dimsum" aria-label="Jumlah pesanan Dimsum" />
+          </div>
+          <button class="add-btn" data-targetqty="qty-dimsum">Tambah ke Keranjang</button>
+        </div>
+        </article>
+      <article class="product-card" tabindex="0" data-name="Otak-Otak" data-price="8000">
+        <img src="https://img-global.cpcdn.com/003_recipes/9296fae852e7dbc1/751x532cq70/otak-otak-goreng-foto-resep-utama.jpg" alt="Otak-Otak" />
+        <div class="product-info">
+          <h3>Otak-Otak</h3>
+          <div class="price">Rp 8.000</div>
+          <div class="quantity-container">
+            <label for="qty-otakotak">Qty:</label>
+            <input type="number" min="1" value="1" id="qty-otakotak" aria-label="Jumlah pesanan Otak-Otak" />
+          </div>
+          <button class="add-btn" data-targetqty="qty-otakotak">Tambah ke Keranjang</button>
+        </div>
+      </article>
+      <article class="product-card" tabindex="0" data-name="Cireng Rujak" data-price="12000">
+        <img src="data:image/jpeg;base64,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" alt="Rujak Cireng" />
+        <div class="product-info">
+          <h3>Rujak Cireng</h3>
+          <div class="price">Rp 12.000</div>
+          <div class="quantity-container">
+            <label for="qty-rujakcireng">Qty:</label>
+            <input type="number" min="1" value="1" id="qty-rujakcireng" aria-label="Jumlah pesanan Rujak Cireng" />
+          </div>
+          <button class="add-btn" data-targetqty="qty-rujakcireng">Tambah ke Keranjang</button>
+        </div>
+        </article>
+      <article class="product-card" tabindex="0" data-name="Onion Ring" data-price="12000">
+        <img src="https://th.bing.com/th/id/OIP.ugUE8DEmTGx7beuDrLJ9iQHaDt?w=321&h=174&c=7&r=0&o=5&dpr=1.1&pid=1.7" alt="Onion Ring" />
+        <div class="product-info">
+          <h3>Onion Ring</h3>
+          <div class="price">Rp 12.000</div>
+          <div class="quantity-container">
+            <label for="qty-onioning">Qty:</label>
+            <input type="number" min="1" value="1" id="qty-onioning" aria-label="Jumlah pesanan Onion Ring" />
+          </div>
+          <button class="add-btn" data-targetqty="qty-onioning">Tambah ke Keranjang</button>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section id="drinks" aria-label="Daftar Minuman">
+    <h2>Minuman</h2>
+    <div class="product-grid">
+      <article class="product-card" tabindex="0" data-name="Teh Manis Hot/Ice" data-price="5000">
+        <img src="https://www.astronauts.id/blog/wp-content/uploads/2023/03/Beberapa-Resep-Es-Teh-Manis-Yang-Enggak-Ngebosenin-Untuk-Buka-Puasa.jpg" alt="Teh Manis/Ice" />
+        <div class="product-info">
+          <h3>Teh Manis hot/Ice</h3>
+          <div class="price">Rp 5.000</div>
+          <div class="quantity-container">
+            <label for="qty-tehmanis">Qty:</label>
+            <input type="number" min="1" value="1" id="qty-tehmanis" aria-label="Jumlah pesanan Teh Manis" />
+          </div>
+          <button class="add-btn" data-targetqty="qty-estehmanis">Tambah ke Keranjang</button>
+        </div>
+      </article>
+      <article class="product-card" tabindex="0" data-name="Kopi Hitam" data-price="6000">
+        <img src="https://th.bing.com/th/id/OIP.WQFwvm-qzknrpgEcMDTSjwHaEj?w=303&h=187&c=7&r=0&o=5&pid=1.7" alt="Kopi Hitam" />
+        <div class="product-info">
+          <h3>Kopi Hitam</h3>
+          <div class="price">Rp 6.000</div>
+          <div class="quantity-container">
+            <label for="qty-kopihitam">Qty:</label>
+            <input type="number" min="1" value="1" id="qty-kopihitam" aria-label="Jumlah pesanan Kopi Hitam" />
+          </div>
+          <button class="add-btn" data-targetqty="qty-jusjeruk">Tambah ke Keranjang</button>
+        </div>
+      </article>
+      <article class="product-card" tabindex="0" data-name="Kopi Susu" data-price="7000">
+        <img src="https://th.bing.com/th/id/OIP.Xvhs4ZGv1Kw8Bw0eK8PS5gHaFW?w=249&h=180&c=7&r=0&o=5&pid=1.7" alt="Kopi Susu" />
+        <div class="product-info">
+          <h3>Kopi Susu</h3>
+          <div class="price">Rp 7.000</div>
+          <div class="quantity-container">
+            <label for="qty-kopisusu">Qty:</label>
+            <input type="number" min="1" value="1" id="qty-kopisusu" aria-label="Jumlah pesanan Kopi Susu" />
+          </div>
+          <button class="add-btn" data-targetqty="qty-kopitubruk">Tambah ke Keranjang</button>
+        </div>
+      </article>
+      <article class="product-card" tabindex="0" data-name="Wedang Jahe" data-price="8000">
+        <img src="https://th.bing.com/th/id/OIP.n95-qJnTB45Uuwebrvli7AHaDt?w=309&h=174&c=7&r=0&o=5&pid=1.7" alt="Wedang Jahe" />
+        <div class="product-info">
+          <h3>Wedang Jahe</h3>
+          <div class="price">Rp 8.000</div>
+          <div class="quantity-container">
+            <label for="qty-wedangjahe">Qty:</label>
+            <input type="number" min="1" value="1" id="qty-wedangjahe" aria-label="Jumlah pesanan Wedang Jahe" />
+          </div>
+          <button class="add-btn" data-targetqty="qty-jusjeruk">Tambah ke Keranjang</button>
+        </div>
+      </article>
+      <article class="product-card" tabindex="0" data-name="Ice Jeruk" data-price="10000">
+        <img src="https://th.bing.com/th/id/OIP.RzCaZwhpYOayOnC5Udh6TgHaE8?rs=1&pid=ImgDetMain" alt="Ice Jeruk" />
+        <div class="product-info">
+          <h3>Ice Jeruk</h3>
+          <div class="price">Rp 10.000</div>
+          <div class="quantity-container">
+            <label for="qty-icejeruk">Qty:</label>
+            <input type="number" min="1" value="1" id="qty-icejeruk" aria-label="Jumlah pesanan Ice Jeruk" />
+          </div>
+          <button class="add-btn" data-targetqty="qty-icejeruk">Tambah ke Keranjang</button>
+        </div>
+      </article>
+      <article class="product-card" tabindex="0" data-name="Lemon Tea" data-price="8000">
+        <img src="https://th.bing.com/th/id/OIP.elozQ1-130UINruZKm0mowHaE8?w=294&h=196&c=7&r=0&o=5&pid=1.7" alt="Lemon Tea" />
+        <div class="product-info">
+          <h3>Lemon Tea</h3>
+          <div class="price">Rp 8.000</div>
+          <div class="quantity-container">
+            <label for="qty-lemontea">Qty:</label>
+            <input type="number" min="1" value="1" id="qty-lemontea" aria-label="Jumlah pesanan Lemon Tea" />
+          </div>
+          <button class="add-btn" data-targetqty="qty-lemontea">Tambah ke Keranjang</button>
+        </div>
+      </article>
+      <article class="product-card" tabindex="0" data-name="Ice Drink Bengbeng" data-price="6000">
+        <img src="https://down-tw.img.susercontent.com/file/5827666b6d0c922aeadaae797c1d2b3f" alt="Ice Drink Bengbeng" />
+        <div class="product-info">
+          <h3>Ice Drink Bengbeng</h3>
+          <div class="price">Rp 6.000</div>
+          <div class="quantity-container">
+            <label for="qty-icedringkbengbeng">Qty:</label>
+            <input type="number" min="1" value="1" id="qty-icedringkbengbeng" aria-label="Jumlah pesanan Ice Drink Bengbeng" />
+          </div>
+          <button class="add-btn" data-targetqty="qty-icedringkbengbeng">Tambah ke Keranjang</button>
+        </div>
+      </article>
+      <article class="product-card" tabindex="0" data-name="Ice Chocolatos" data-price="6000">
+        <img src="https://th.bing.com/th/id/OIP.eeJSMeamhm1hdNtuUe7qjQHaEn?rs=1&pid=ImgDetMain" alt="Ice Chocolatos" />
+        <div class="product-info">
+          <h3>Ice Chocolatos</h3>
+          <div class="price">Rp 6.000</div>
+          <div class="quantity-container">
+            <label for="qty-icechocolatos">Qty:</label>
+            <input type="number" min="1" value="1" id="qty-icechocolatos" aria-label="Jumlah pesanan Ice Chocolatos" />
+          </div>
+          <button class="add-btn" data-targetqty="qty-icechocolatos">Tambah ke Keranjang</button>
+        </div>
+      </article>
+      <article class="product-card" tabindex="0" data-name="Ice Milo" data-price="5000">
+        <img src="https://quickee.com/wp-content/uploads/2022/11/Iced-Milo_0.png" alt="Ice Milo" />
+        <div class="product-info">
+          <h3>Ice Milo</h3>
+          <div class="price">Rp 5.000</div>
+          <div class="quantity-container">
+            <label for="qty-icemilo">Qty:</label>
+            <input type="number" min="1" value="1" id="qty-icemilo" aria-label="Jumlah pesanan Ice Milo" />
+          </div>
+          <button class="add-btn" data-targetqty="qty-icemilo">Tambah ke Keranjang</button>
+        </div>
+      </article>
+      <article class="product-card" tabindex="0" data-name="Kopi Good Day Ice/Hot" data-price="7000">
+        <img src="https://i0.wp.com/i.gojekapi.com/darkroom/gofood-indonesia/v2/images/uploads/60b3bd79-1902-4ebd-bd95-9c043e946764_IMG_20210304_221740_571.jpg" alt="Kopi Good Day Ice/Hot" />
+        <div class="product-info">
+          <h3>Kopi Good Day Ice/Hot</h3>
+          <div class="price">Rp 7.000</div>
+          <div class="quantity-container">
+            <label for="qty-kopigoodday">Qty:</label>
+            <input type="number" min="1" value="1" id="qty-kopigoodday" aria-label="Jumlah pesanan Kopi Good Day Ice/Hot" />
+          </div>
+          <button class="add-btn" data-targetqty="qty-kopigoodday">Tambah ke Keranjang</button>
+        </div>
+      </article>
+       <article class="product-card" tabindex="0" data-name="Susu Dancow Ice/Hot" data-price="7000">
+        <img src="https://www.frisianflag.com/storage/app/media/_mediathumbs/susu-putih-atau-susu-coklat-rasa-berbeda-manfaat-serupa-2285d15071fd889aa1ccff0dbbd3f0bb.jpg" alt="Susu Dancow Ice/Hot" />
+        <div class="product-info">
+          <h3>Susu Dancow Ice/Hot</h3>
+          <div class="price">Rp 7.000</div>
+          <div class="quantity-container">
+            <label for="qty-susudancow">Qty:</label>
+            <input type="number" min="1" value="1" id="qty-susudancow" aria-label="Jumlah pesanan Susu Dancow Ice/Hot" />
+          </div>
+          <button class="add-btn" data-targetqty="qty-susudancow">Tambah ke Keranjang</button>
+        </div>
+      </article>
+    </div>
+  </section>
+</main>
+
+<!-- Order Modal -->
+<div id="order-modal" role="dialog" aria-modal="true" aria-labelledby="order-modal-title" tabindex="-1">
+  <div class="modal-content">
+    <header>
+      <div id="order-modal-title">Pesanan Anda</div>
+      <button class="close-btn" aria-label="Tutup Pesanan">&times;</button>
+    </header>
+    <main>
+      <div id="order-items-list">
+        <!-- Orders will be populated here -->
+      </div>
+      <div id="order-empty" style="text-align:center; padding:1.5rem; color:#666;">Keranjang kosong.</div>
+      <div class="payment-methods">
+        <div style="font-weight:700; margin-bottom: 0.6rem;">Pilih Metode Pembayaran:</div>
+        <label><input type="radio" name="payment" value="Tunai (Cash)" /> Tunai (Cash)</label>
+        <label><input type="radio" name="payment" value="Transfer Bank" /> Transfer Bank</label>
+        <label><input type="radio" name="payment" value="Dana" /> Dana</label>
+        <label><input type="radio" name="payment" value="OVO" /> OVO</label>
+        <label><input type="radio" name="payment" value="QRIS" /> QRIS</label>
+        <label><input type="radio" name="payment" value="ShopeePay" /> ShopeePay</label>
+      </div>
+    </main>
+    <footer>
+      <div>Total: <span id="order-total">Rp 0</span></div>
+      <button class="checkout-btn" id="checkout-btn" disabled>Checkout</button>
+    </footer>
+  </div>
+</div>
+
+<!-- WhatsApp fixed button -->
+<a href="https://wa.me/6285892749088?text=Halo%20Warung%20Jamet,%20Saya%20ingin%20memesan%20makanan" target="_blank" rel="noopener" aria-label="Hubungi via WhatsApp" class="whatsapp-float">
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path d="M20.52 3.48A11.908 11.908 0 0012 0C5.372 0 .004 5.372.004 12a11.969 11.969 0 001.662 6.008L0 24l6.175-1.641A11.966 11.966 0 0012 24c6.628 0 12-5.372 12-12 0-3.176-1.297-6.176-3.48-8.52zM12 21.5c-2.182 0-4.176-.785-5.701-2.09l-.408-.34-3.711.985.991-3.64-.303-.413A9.734 9.734 0 012.25 12c0-5.108 4.142-9.25 9.25-9.25S20.75 6.892 20.75 12 16.908 21.5 12 21.5zm5.002-7.404c-.133-.225-.489-.365-1.02-.641-.531-.28-1.103-.277-1.579-.097-.484.186-1.698.911-2.066 1.1-.379.201-.654.3-.942-.3-.268-.553-1.036-2.03-1.422-2.73-.379-.713-.767-.617-1.12-.63-.289-.006-.626-.009-.95-.009a.879.879 0 01-.914-.914c0-.526.743-1.219 1.067-1.349.268-.095.594-.129.912-.129.318 0 .663.037.95.18.286.145.387.262.572.668.186.407.628 1.4.68 1.51.06.134.1.288.02.464-.095.225-.133.363-.268.569-.14.225-.294.5-.422.675-.132.176-.265.293-.552.454-.187.1-.336.178-.458.309-.274.254-.557.52-.802.82-.099.122-.119.263-.067.439.09.329.364 1.086.832 1.756.55.772 1.693 1.947 3.536 2.158.518.055.895.04 1.22.025.374-.018 1.143-.465 1.305-.913.163-.464.163-.859.114-.927z"/>
+  </svg>
+</a>
+
+<script>
+  // Promo slider
+  const slides = document.querySelector('.slides');
+  const totalSlides = slides.children.length;
+  let index = 0;
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+
+  function showSlide(i) {
+    if (i < 0) { index = totalSlides - 1; }
+    else if (i >= totalSlides) { index = 0; }
+    else { index = i; }
+    slides.style.transform = 'translateX(' + (-index * 100) + '%)';
+  }
+
+  prevBtn.addEventListener('click', () => {
+    showSlide(index -1);
+  });
+  nextBtn.addEventListener('click', () => {
+    showSlide(index + 1);
+  });
+
+  // Auto slide every 5 seconds
+  setInterval(() => {
+    showSlide(index + 1);
+  }, 5000);
+
+  // Cart functionality
+  const cart = {};
+  const viewCartBtn = document.getElementById('view-cart-btn');
+  const orderModal = document.getElementById('order-modal');
+  const closeBtn = orderModal.querySelector('.close-btn');
+  const orderItemsList = document.getElementById('order-items-list');
+  const orderEmptyMsg = document.getElementById('order-empty');
+  const orderTotalSpan = document.getElementById('order-total');
+  const checkoutBtn = document.getElementById('checkout-btn');
+
+  // Add to cart buttons
+  document.querySelectorAll('.add-btn').forEach(button => {
+    button.addEventListener('click', () => {
+      const productCard = button.closest('.product-card');
+      const name = productCard.getAttribute('data-name');
+      const price = parseInt(productCard.getAttribute('data-price'));
+      const qtyInputId = button.getAttribute('data-targetqty');
+      const qtyInput = document.getElementById(qtyInputId);
+      let qty = parseInt(qtyInput.value);
+
+      if (isNaN(qty) || qty < 1) {
+        alert('Jumlah pemesanan harus minimal 1!');
+        qtyInput.focus();
+        return;
+      }
+
+      if (cart[name]) {
+        cart[name].quantity += qty;
+      } else {
+        cart[name] = { price: price, quantity: qty };
+      }
+      updateCartCount();
+      alert('Berhasil menambahkan ' + qty + ' x ' + name + ' ke pesanan.');
+    });
+  });
+
+  // Update cart count in button text
+  function updateCartCount() {
+    const totalCount = Object.values(cart).reduce(function(sum, item) { return sum + item.quantity; }, 0);
+    viewCartBtn.textContent = 'Lihat Pesanan (' + totalCount + ')';
+  }
+
+  // Show Order Modal
+  viewCartBtn.addEventListener('click', () => {
+    populateOrderModal();
+    orderModal.classList.add('active');
+    orderModal.focus();
+  });
+
+  // Close modal
+  closeBtn.addEventListener('click', () => {
+    orderModal.classList.remove('active');
+  });
+
+  // Close modal on outside click
+  orderModal.addEventListener('click', function(e) {
+    if (e.target === orderModal) {
+      orderModal.classList.remove('active');
+    }
+  });
+
+  // Update order modal content
+  function populateOrderModal() {
+    orderItemsList.innerHTML = '';
+    var items = Object.entries(cart);
+
+    if (items.length === 0) {
+      orderEmptyMsg.style.display = 'block';
+      checkoutBtn.disabled = true;
+      orderTotalSpan.textContent = 'Rp 0';
+      return;
+    } else {
+      orderEmptyMsg.style.display = 'none';
+      checkoutBtn.disabled = false;
+    }
+
+    var total = 0;
+    items.forEach(function(entry) {
+      var name = entry[0];
+      var item = entry[1];
+      var itemTotal = item.price * item.quantity;
+      total += itemTotal;
+      var orderItem = document.createElement('div');
+      orderItem.classList.add('order-item');
+      orderItem.innerHTML =
+        '<span>' + name + ' (x' + item.quantity + ')</span>' +
+        '<span class="qty-price">Rp ' + itemTotal.toLocaleString('id-ID') + '</span>';
+      orderItemsList.appendChild(orderItem);
+    });
+    orderTotalSpan.textContent = 'Rp ' + total.toLocaleString('id-ID');
+  }
+
+  // Checkout button handler
+  checkoutBtn.addEventListener('click', () => {
+    if (Object.keys(cart).length === 0) {
+      alert('Keranjang kosong, tidak ada pesanan untuk checkout.');
+      return;
+    }
+    var paymentRadios = document.querySelectorAll('input[name="payment"]');
+    var selectedPayment = null;
+    for (var i = 0; i < paymentRadios.length; i++) {
+      if (paymentRadios[i].checked) {
+        selectedPayment = paymentRadios[i].value;
+        break;
+      }
+    }
+    if (!selectedPayment) {
+      alert('Silakan pilih metode pembayaran sebelum checkout.');
+      return;
+    }
+    // Simple checkout confirmation
+    var confirmationMessage = 'Terima kasih atas pesanan Anda!\nDetail pesanan:\n';
+    Object.entries(cart).forEach(function(entry) {
+      var name = entry[0];
+      var item = entry[1];
+      confirmationMessage += name + ' x' + item.quantity + '\n';
+    });
+    confirmationMessage += '\nMetode Pembayaran: ' + selectedPayment;
+    alert(confirmationMessage);
+    // Clear cart and reset payment selection
+    for (var key in cart) {
+      delete cart[key];
+    }
+    updateCartCount();
+    populateOrderModal();
+    orderModal.classList.remove('active');
+    // Reset payment radios
+    paymentRadios.forEach(function(radio){ radio.checked = false; });
+  });
+
+  // Initial cart count update
+  updateCartCount();
+</script>
+
+</body>
+</html>
+
